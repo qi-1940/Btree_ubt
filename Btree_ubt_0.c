@@ -1,10 +1,17 @@
 /*
-该文件包含了Btree项目中大部分源文件所需的函数，如二叉树创建函数
+该文件包含了Btree_ubt项目中大部分源文件所需的函数.
+
+The function list:
+void show(Ptr);
+Ptr search(Ptr,int);
+Ptr search_by_relation(Ptr,int);
+Ptr creat_Btree(Ptr,int);
+
 */
 #include <stdio.h>
 #include<stdlib.h>
 #include "Btree_ubt_0.h"
-
+//show
 void show(Ptr root){
     Ptr temp=root;
     if(temp!=NULL){
