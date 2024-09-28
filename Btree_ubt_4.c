@@ -13,34 +13,137 @@ is accomplish by array.
 #include <stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stdbool.h>
+#include<ctype.h>
+#include"stack_by_array.h"
 
-char* to_postfix(char* in){
-    char* po_in;
-    
-    return po_in;
+SqStack  string_to_stack(char * s){
+    SqStack input;
+    input=creat_stack();
+    int i=0;
+    while(s[i]!='\0'||s[i]!='\n'){
+        push(input,s[i]);
+        i++;
+    }
+    return input;
 }
 
-double evaluate_by_pfix(char* po_in){
-    double outcome;
+char * to_postfix(char * s){
+    char * o=(char *)malloc(100*sizeof(char));
+    for(int i=0;i<100;i++){
+        o[i]='\0';
+    }
+    SqStack op;
+    op=creat_stack();
+    int i=0,j=0;
+    while(s[i]!='\0'||s[i]!='\n'){
+        if(isdigit( s[i])){
+            o[j++]=s[i];
+        }
+        else{
+             if(op.top==op.base){
+                push(op,s[i]);
+             }
+             else if (s[i]==')')
+             {
+                while(*op.top!='('){
+                    o[j++]=pop(op);
+                }
+                pop(op);
+             }
+             
+             else if ((*op.top)=='+'||(*(op.top))=='-')
+             {
+                push(op,s[i]);
+             }
+             else if (*op.top=='*'||*op.top=='/')
+             {
+                if(s[i]=='+'||s[i]=='-'){
+                    while(!(*op.top=='*'||*op.top=='/')){
+                        o[j++]=pop(op);
+                    }
+                    push(op,s[i]);
+                }
+                else if (s[i]=='*'||s[i]=='/')
+                {
+                    
+                    push(op,s[i]);
+                }
+                
+             }  
+        }
+        i++;
+    }
+    while(!isEmpty(op)){
+        o[j++]=pop(op);
+    }
+    free(op.base);
+    return o;
+}
 
+double evaluate_by_pfix(char * s){
+    double outcome;
+    SqStack op = creat_stack(op);
+    int i=0;
+    while(s[i]!='\0'||s[i]!='\n'){
+        if(isdigit(s[i])){
+            push(op,s[i]);
+        }
+        else{
+            if(s[i]=='+'){
+                int a,b;
+                a=pop(op);
+                b=pop(op);
+                push(op,a+b);
+            }
+            else if (s[i]=='-')
+            {
+                int a,b;
+                a=pop(op);
+                b=pop(op);
+                push(op,a-b);
+            }
+            else if (s[i]=='*')
+            {
+                int a,b;
+                a=pop(op);
+                b=pop(op);
+                push(op,a*b);
+            }
+            else if (s[i]=='/')
+            {
+                int a,b;
+                a=pop(op);
+                b=pop(op);
+                push(op,(double)a/b);
+            }
+            
+            
+        }
+
+        i++;
+    }
+    outcome=pop(op);
+    free(op.base);
     return outcome;
 }
 
 int main (void){
-
+    
     //Get input.
     printf("Please input a arithmetic expression:\n");
-    char* input[100]={'\0'};
-    scanf("%s",input);
+    char input_0[100]={'\0'};
+    scanf("%s",input_0);
 
     //Transform input into postfix.
-    char postfix_input[100]={'\0'};
-    strncpy(postfix_input,to_postfix(input),sizeof(postfix_input)-1);
-    postfix_input[sizeof(postfix_input)-1]='\0';
-
+    char i_p[100]={'\0'};
+    char * p=to_postfix(input_0);
+    strncpy(i_p,p,sizeof(i_p)-1);
+    free(p);
+    i_p[sizeof(i_p)-1]='\0';
+    
     //Evaluate through postfix expression and show the outcome.
-    printf("The outcome is %5.3g .\n",evaluate_by_pfix(postfix_input));
-
+    printf("The outcome is %5.3g .\n",evaluate_by_pfix(i_p));
 
     return 0;
 }
