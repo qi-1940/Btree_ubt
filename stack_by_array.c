@@ -7,43 +7,39 @@
 #define STACK_SIZE 100
 #define STACKINCREMENT 10
 
-SqStack creat_stack(){
-    SqStack S;
-    S.base=(int *)malloc(STACK_SIZE * sizeof(int));
-    S.top=S.base;
-    S.stacksize=STACK_SIZE;
+Stack creat_stack(){
+    Stack S;
+    S=malloc(sizeof(SqStack));
+    S->array=(int *)malloc(STACK_SIZE * sizeof(int));
+    S->top=-1;
+    S->stacksize=STACK_SIZE;
     return S;
 }
 
-SqStack push(SqStack S,int input){
-    if(S.top-S.base>=S.stacksize){
-        S.base=(int *)realloc(S.base,
-        (S.stacksize+STACKINCREMENT)*sizeof(int));
-        S.top=S.base+S.stacksize;
-        S.stacksize+=STACKINCREMENT;
+void push(Stack S,int input){
+    if(S->top>=S->stacksize-1){
+        S->array=(int *)realloc(S->array,
+        (S->stacksize+STACKINCREMENT)*sizeof(int));
+        S->stacksize+=STACKINCREMENT;
     }
-    * S.top ++ = input;
+    S->array[++S->top] = input;
     return S;
 }
 
-int pop(SqStack S){
-    if(S.base==S.top){
-        printf("Failed to pop brcause there is no data int the\ 
-        stack./n");
-        return -999;
+int pop(Stack S){
+    if(S->top==-1){
+        printf("Failed to pop brcause there is no data int the stack.\n");
+        exit(-1);
     }
     else{
-        int i = *(S.top);
-        S.top--;
-        S.stacksize--;
-        return i;
+        return S->array[S->top--];
     }
 }
 
-_Bool isEmpty(SqStack S){
-    return S.base==S.top?true:false;
+_Bool isEmpty(Stack S){
+    return S->top==-1?true:false;
 }
 
-_Bool isFull(SqStack S){
-    return (S.top-S.base)==S.stacksize?true:false;
+_Bool isFull(Stack S){
+    return S->top==S->stacksize-1?true:false;
 }

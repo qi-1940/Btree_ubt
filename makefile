@@ -15,4 +15,4 @@ stack_by_array.o:stack_by_array.h
 Btree_ubt_4.o:stack_by_array.h
 
 Btree_ubt_4:stack_by_array.o Btree_ubt_4.o
-	gcc stack_by_array.o Btree_ubt_4.o -o Btree_ubt_4
+	gcc -g stack_by_array.o Btree_ubt_4.o -o Btree_ubt_4

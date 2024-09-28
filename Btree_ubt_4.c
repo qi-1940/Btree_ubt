@@ -17,77 +17,58 @@ is accomplish by array.
 #include<ctype.h>
 #include"stack_by_array.h"
 
-SqStack  string_to_stack(char * s){
-    SqStack input;
-    input=creat_stack();
-    int i=0;
-    while(s[i]!='\0'||s[i]!='\n'){
-        push(input,s[i]);
-        i++;
-    }
-    return input;
-}
-
 char * to_postfix(char * s){
-    char * o=(char *)malloc(100*sizeof(char));
-    for(int i=0;i<100;i++){
-        o[i]='\0';
-    }
-    SqStack op;
-    op=creat_stack();
+    char * o=(char *)calloc(100,sizeof(char));
+    Stack op=creat_stack();
     int i=0,j=0;
-    while(s[i]!='\0'||s[i]!='\n'){
-        if(isdigit( s[i])){
+    while(s[i]!='\0'&&s[i]!='\n'){
+        if(s[i]>='0'&&s[i]<='9'){
             o[j++]=s[i];
         }
         else{
-             if(op.top==op.base){
+            char temp=(char)op->array[op->top];
+             if(isEmpty(op)){
                 push(op,s[i]);
              }
              else if (s[i]==')')
              {
-                while(*op.top!='('){
-                    o[j++]=pop(op);
+                while((char)op->array[op->top]!='('){
+                    o[j++]=(char)pop(op);
                 }
                 pop(op);
              }
-             
-             else if ((*op.top)=='+'||(*(op.top))=='-')
+             else if ((temp)=='+'||((temp)=='-'))
              {
                 push(op,s[i]);
              }
-             else if (*op.top=='*'||*op.top=='/')
+             else if ((temp=='*'||temp=='/')&&(s[i]=='+'||s[i]=='-'))
              {
-                if(s[i]=='+'||s[i]=='-'){
-                    while(!(*op.top=='*'||*op.top=='/')){
-                        o[j++]=pop(op);
-                    }
-                    push(op,s[i]);
+                while((char)op->array[op->top]=='*'||(char)op->array[op->top]=='/'){
+                    o[j++]=(char)pop(op);
                 }
-                else if (s[i]=='*'||s[i]=='/')
-                {
-                    
-                    push(op,s[i]);
-                }
-                
-             }  
+                push(op,s[i]);
+             }
         }
         i++;
     }
     while(!isEmpty(op)){
-        o[j++]=pop(op);
+        //printf("%d\n",op->top);
+        o[j++]=(char)pop(op);
+        //
     }
-    free(op.base);
+    free(op);
     return o;
 }
 
 double evaluate_by_pfix(char * s){
     double outcome;
-    SqStack op = creat_stack(op);
+    Stack op = creat_stack();
     int i=0;
-    while(s[i]!='\0'||s[i]!='\n'){
-        if(isdigit(s[i])){
-            push(op,s[i]);
+    while(s[i]!='\0'&&s[i]!='\n'){
+        if(s[i]>='1'&&s[i]<=9){
+            push(op,(int)(s[i]-'0'));
+            printf("%d\n",(int)(s[i]-'0'));
+            //printf("%d\n",(int)(s[i]-'0'));
         }
         else{
             if(s[i]=='+'){
@@ -115,16 +96,13 @@ double evaluate_by_pfix(char * s){
                 int a,b;
                 a=pop(op);
                 b=pop(op);
-                push(op,(double)a/b);
+                push(op,((double)a)/b);
             }
-            
-            
         }
-
         i++;
     }
     outcome=pop(op);
-    free(op.base);
+    free(op);
     return outcome;
 }
 
@@ -132,12 +110,12 @@ int main (void){
     
     //Get input.
     printf("Please input a arithmetic expression:\n");
-    char input_0[100]={'\0'};
-    scanf("%s",input_0);
+    char in[100]={'\0'};
+    scanf("%s",in);
 
     //Transform input into postfix.
     char i_p[100]={'\0'};
-    char * p=to_postfix(input_0);
+    char * p=to_postfix(in);
     strncpy(i_p,p,sizeof(i_p)-1);
     free(p);
     i_p[sizeof(i_p)-1]='\0';
