@@ -11,6 +11,7 @@ Btree_ubt_2:Btree_ubt_2.o Btree_ubt_0.o
 Btree_ubt_2.o: Btree_ubt_0.h
 
 stack_by_array.o:stack_by_array.h
+	gcc -g -c stack_by_array.c 
 
 Btree_ubt_4.o:stack_by_array.h
 

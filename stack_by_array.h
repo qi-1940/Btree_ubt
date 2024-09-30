@@ -4,7 +4,7 @@
 #include "stdbool.h"
 
 typedef struct {
-    int * array;
+    double * array;
     int top;
     int stacksize;
 }SqStack;
@@ -15,9 +15,9 @@ typedef SqStack * Stack;
 
 Stack creat_stack();
 
-void push(Stack S,int input);
+void push(Stack S,double input);
 
-int pop(Stack S);
+double pop(Stack S);
 
 _Bool isEmpty(Stack S);
 

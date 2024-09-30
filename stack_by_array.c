@@ -16,17 +16,16 @@ Stack creat_stack(){
     return S;
 }
 
-void push(Stack S,int input){
+void push(Stack S,double input){
     if(S->top>=S->stacksize-1){
         S->array=(int *)realloc(S->array,
         (S->stacksize+STACKINCREMENT)*sizeof(int));
         S->stacksize+=STACKINCREMENT;
     }
     S->array[++S->top] = input;
-    return S;
 }
 
-int pop(Stack S){
+double pop(Stack S){
     if(S->top==-1){
         printf("Failed to pop brcause there is no data int the stack.\n");
         exit(-1);
