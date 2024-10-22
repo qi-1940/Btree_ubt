@@ -10,22 +10,22 @@
 Stack creat_stack(){
     Stack S;
     S=malloc(sizeof(SqStack));
-    S->array=(int *)malloc(STACK_SIZE * sizeof(int));
-    S->top=-1;
+    S->array=(element *)malloc(STACK_SIZE * sizeof(element));
+    S->top=-1;//indicate empty stack
     S->stacksize=STACK_SIZE;
     return S;
 }
 
-void push(Stack S,double input){
+void push(Stack S,element input){
     if(S->top>=S->stacksize-1){
-        S->array=(int *)realloc(S->array,
-        (S->stacksize+STACKINCREMENT)*sizeof(int));
+        S->array=(element *)realloc(S->array,
+        (S->stacksize+STACKINCREMENT)*sizeof(element));
         S->stacksize+=STACKINCREMENT;
     }
     S->array[++S->top] = input;
 }
 
-double pop(Stack S){
+element pop(Stack S){
     if(S->top==-1){
         printf("Failed to pop brcause there is no data int the stack.\n");
         exit(-1);

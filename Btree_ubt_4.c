@@ -15,48 +15,50 @@ is accomplish by array.
 #include<string.h>
 #include<stdbool.h>
 #include<ctype.h>
+#include<math.h>
 #include"stack_by_array.h"
 
-int * to_postfix(int * s){
-    int * o=(int *)calloc(100,sizeof(int));
+element * to_postfix(element * s){
+    element * o=(element *)calloc(100,sizeof(element));
+    for(int i=0;i<100;i++){
+        o[i].kind=-1;
+    }
     Stack op=creat_stack();
     int i=0,j=0;
-    while(s[i]!='\0'&&s[i]!='\n'){
+    while(s[i].kind!=-1){
 
         //printf("s[i]=%c.\n",(char)s[i]);
 
-        if(s[i]>='0'&&s[i]<='9'){
+        if(s[i].kind==DOUBLE_KIND){
+            
             o[j++]=s[i];
         }
         else{
-
-            char temp=(char)op->array[op->top];
-            //printf("temp=%c\n",temp);
-
+            char temp =(char)(op->array[op->top].u.c);
              if(isEmpty(op)){
                 push(op,s[i]);
              }
-             else if (s[i]==')')
+             else if (s[i].u.c==')')
              {
-                while((char)op->array[op->top]!='('){
-                    o[j++]=(char)pop(op);
+                while((char)(op->array[op->top].u.c)!='('){
+                    o[j++]=pop(op);
                     //printf("%c was poped and outputed!\n",o[j-1]);
                 }
                 //printf("%c was poped !\n",op->array[op->top]);
                 pop(op);
                 
              }
-             else if ((temp=='+'||temp=='-')&&(s[i]=='+'||s[i]=='-'))
+             else if ((temp=='+'||temp=='-')&&(s[i].u.c=='+'||s[i].u.c=='-'))
              {
-                o[j++]=(char)pop(op);
+                o[j++]=pop(op);
                 push(op,s[i]);
              }
-             else if ((temp=='*'||temp=='/')&&(s[i]=='+'||s[i]=='-'))
+             else if ((temp=='*'||temp=='/')&&(s[i].u.c=='+'||s[i].u.c=='-'))
              {
-                while((char)op->array[op->top]=='*'||(char)op->array[op->top]=='/'||
-                (char)op->array[op->top]=='+'||(char)op->array[op->top]=='-'
+                while((char)(op->array[op->top].u.c)=='*'||(char)(op->array[op->top].u.c)=='/'||
+                (char)(op->array[op->top].u.c)=='+'||(char)(op->array[op->top].u.c)=='-'
                 ){
-                    o[j++]=(char)pop(op);
+                    o[j++]=pop(op);
                 }
                 push(op,s[i]);
              }
@@ -67,7 +69,7 @@ int * to_postfix(int * s){
                 push(op,s[i]);
              }
              */
-             else if (s[i]=='(')
+             else if (s[i].u.c=='(')
              {
                 push(op,s[i]);
              }
@@ -75,79 +77,83 @@ int * to_postfix(int * s){
              {
                 push(op,s[i]);
              }
-             
-             
-
-             
         }
         //printf("%d was changed to %d.\n",i,i+1);
         i++;
     }
 
-
     while(!isEmpty(op)){
-        o[j++]=(char)pop(op);
+        o[j++]=pop(op);
     }
     free(op);
     return o;
 }
 
-double evaluate_by_pfix(char * s){
-    show(s);
+double evaluate_by_pfix(element * s){
+    //show(s);
     double outcome;
     Stack op = creat_stack();
-    
-
-
-
 
     int i=0;
-    while(s[i]!='\0'&&s[i]!='\n'){
-        printf("s[i]=%c.\n",(char)s[i]);
-        if(s[i]>='1'&&s[i]<='9'){
-            printf("%5.3f was pushed in!\n",(double)s[i]-'0');
-            push(op,(double)s[i]-'0');
+    while(s[i].kind!=-1){
+        //printf("s[i]=%c.\n",(char)s[i]);
+        if(s[i].kind==DOUBLE_KIND){
+            //printf("%5.3f was pushed in!\n",(double)s[i]-'0');
+            push(op,s[i]);
         }
         else{
-            if(s[i]=='+'){
+            if(s[i].u.c=='+'){
+                element e;
+                e.kind=DOUBLE_KIND;
+
                 double a,b;
-                a=pop(op);
-                b=pop(op);
-                push(op,b+a);
-                printf("%5.3f+%5.3f=%5.3f\n",b,a,b+a);
+                a=pop(op).u.d;
+                b=pop(op).u.d;
+                e.u.d=b+a;
+                push(op,e);
+                //printf("%5.3f+%5.3f=%5.3f\n",b,a,b+a);
             }
-            else if (s[i]=='-')
+            else if (s[i].u.c=='-')
             {
+                element e;
+                e.kind=DOUBLE_KIND;
                 double a,b;
-                a=pop(op);
-                b=pop(op);
-                push(op,b-a);
-                printf("%5.3f-%5.3f=%5.3f\n",b,a,b-a);
+                a=pop(op).u.d;
+                b=pop(op).u.d;
+                e.u.d=b-a;
+                push(op,e);
+                //printf("%5.3f-%5.3f=%5.3f\n",b,a,b-a);
             }
-            else if (s[i]=='*')
+            else if (s[i].u.c=='*')
             {
+                element e;
+                e.kind=DOUBLE_KIND;
                 double a,b;
-                a=pop(op);
-                b=pop(op);
-                push(op,b*a);
-                printf("%5.3f*%5.3f=%5.3f\n",b,a,b*a);
+                a=pop(op).u.d;
+                b=pop(op).u.d;
+                e.u.d=b*a;
+                push(op,e);
+                //printf("%5.3f*%5.3f=%5.3f\n",b,a,b*a);
             }
-            else if (s[i]=='/')
+            else if (s[i].u.c=='/')
             {
+                element e;
+                e.kind=DOUBLE_KIND;
                 double a,b;
-                a=pop(op);
-                b=pop(op);
-                push(op,b/a);
-                printf("%5.3f/%5.3f=%5.3f\n",b,a,b/a);
+                a=pop(op).u.d;
+                b=pop(op).u.d;
+                e.u.d=b/a;
+                push(op,e);
+                //printf("%5.3f/%5.3f=%5.3f\n",b,a,b/a);
             }
         }
         i++;
     }
-    outcome=pop(op);
+    outcome=pop(op).u.d;
     free(op);
     return outcome;
 }
-
+/*
 void show(char* in){
     int i=0;
     while(in[i]!='\n'&&in[i]!='\0'){
@@ -156,57 +162,72 @@ void show(char* in){
     }
     printf("\n");
 }
+*/
+double tran(char * in){
+    int i=0;
+    double out=0;
+    while(in[i]!=0&&in[i]!='.'){
 
-int transform(char * in){
+        i++;
+    }
+    for (int j=0;j<i;j++){
+        out+=(in[j]-'0')*pow(10.0,(double)(i-1-j));
+    }
+    i++;
+    int ii=0;
+    while(in[i++]!=0){
+        ii++;
+    }
+    i-=ii;
+    i--;
+    for (int j=0;j<ii;j++){
+        out+=(in[j+i]-'0')*pow(10.0,(double)((-j)-1));
+    }
+    return out;
+}
 
+element * cut_apart(char * in){
+    char temp[10];
+    element * in_;
+    int j=0;
+    in_=(element*)calloc(100,sizeof(element));
+    for(int i=0;i<100;i++){
+        in_[i].kind=-1;
+    }
+    for(int i=0;in[i]!=0&&in[i]!='\n'&&i<=99;i++){
+
+        for(int i=0;i<=9;i++){
+            temp[i]='\0';
+        }
+        
+        if((!isdigit(in[i]))&&(in[i]!='.')){
+            in_[j].kind=CHAR_KIND;
+            in_[j++].u.c=(char)in[i];
+        }
+        else{
+            int o=0;
+            temp[o++]=in[i];
+            while(isdigit(in[i+1])||in[i+1]=='.'){
+                i++;
+                temp[o++]=in[i];
+            }
+            in_[j].kind=DOUBLE_KIND;
+            in_[j++].u.d=tran(temp);
+        }
+
+    }
+    return in_;
 }
 
 int main (void){
-    
     //Get input.
     printf("Please input a arithmetic expression:\n");
-    //char in[100]={'\0'};
-    //scanf("%s",in);
-    int in[100]={'\0'};
-    char temp[10]={'\0'};
-    int i=0;
-    int j=0;
-    char ch,ch_;
-    while(ch=getchar()!='\0'&&ch!='\n'){
-        if(j>=9){
-            printf("Single number is too long!\n");
-            exit(-999);
-        }
-        //ch=getchar();
-        ch_=getchar();
-        if((ch>='1'&&ch<='9')&&(ch_>='1'&&ch_<='9')){
-            temp[j++]=ch;
-        }
-        else if ((ch>='1'&&ch<='9')&&!(ch_>='1'&&ch_<='9'))
-        {
-            temp[j++]=ch;
-            j=0;
-            in[i++]=transform(temp);
-        }
-        else{
-
-            in[i++]=ch-50;
-        }
-        
-    }
-    
-
+    char in[100]={'\0'};//intial input
+    scanf("%s",in);
+    element * in_;// Intial input is cut apart.
+    in_=cut_apart(in);
     //Transform input into postfix.
-    int i_p[100]={'\0'};
-    int * p=to_postfix(in);
-    strncpy(i_p,p,sizeof(i_p)-1);
-    
-    free(p);
-    i_p[sizeof(i_p)-1]='\0';
-    //show(i_p);
-    
     //Evaluate through postfix expression and show the outcome.
-    printf("The outcome is %5.3g .\n",evaluate_by_pfix(i_p));
-
+    printf("The outcome is %5.3g .\n",evaluate_by_pfix(to_postfix(in_)));
     return 0;
 }
